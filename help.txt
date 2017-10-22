@@ -1,0 +1,6 @@
+#give_bribe - дати хабара
+#blame_a_crime - звинуватити у злочині
+#restaurant - погодувати
+#hospital - полікувати
+#sleep_a_little - поспати
+#stats - вивести стати
