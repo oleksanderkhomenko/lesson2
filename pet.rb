@@ -2,81 +2,74 @@ class Pet
   HELP = File.open('help.txt', 'r+', &:read)
   def initialize(name = 'Lyashko')
     @name = name
-    # здоров'я
     @health = 100
-    # голод
     @hunger = 0
-    # настрій
     @mood = 100
-    # втома
     @fatigue = 0
-    # сонливість
     @sleepiness = 0
-    # жадність
     @greed = 50
-    # корумпованість
     @corruption = 30
 
-    puts "#{@name.gsub("\n", "")}: Я ваш новий чи старий депутат. Україна це Еуропа.",""
+    puts "#{@name.tr("\n", '')}: Я ваш депутат. Україна це Еуропа.", ''
   end
 
-  # дати хабара
+  # give bribe
   def give_bribe
     @corruption += 10
     @greed += 10
     @mood += 20
-    puts "Вашому депутату дали хабара."
-    puts "#{@name.gsub("\n", "")}: Ці руки нічого не крали!",""
+    puts 'Вашому депутату дали хабара.'
+    puts "#{@name.tr("\n", '')}: Ці руки нічого не крали!", ''
     time_travel
   end
 
-  # звинуватити у злочині
+  # blame a crime
   def blame_a_crime
     @greed += -15
     @corruption += -15
-    puts "Вашого депутата звинуватили у злочині."
-    puts "#{@name.gsub("\n", "")}: Слава Україні!",""
+    puts 'Вашого депутата звинуватили у злочині.'
+    puts "#{@name.tr("\n", '')}: Слава Україні!", ''
     time_travel
   end
 
-  # посидіти в ресторані
+  # eat
   def restaurant
     @hunger = 0
-    puts "Ваш депутат поїв в ресторані."
-    puts "#{@name.gsub("\n", "")}: Дякую моїм потнякам податків.",""
+    puts 'Ваш депутат поїв в ресторані.'
+    puts "#{@name.tr("\n", '')}: Дякую моїм потнякам податків.", ''
     time_travel
   end
 
-  # полікувати
+  # cure
   def hospital
     @health = 100
-    puts "Депутат поправив своє здоров'я"
-    puts "#{@name.gsub("\n", "")}: Не будемо говорити про погане, а краще зробимо.",""
+    puts 'Депутат поправив своє здоров\'я'
+    puts "#{@name.tr("\n", '')}: Не будемо говорити про погане, а краще зробимо.", ''
     time_travel
   end
 
-  # поспати
+  # sleep
   def sleep_a_little
     @sleepiness = 0
     @fatigue = 0
     @mood = 100
     @hunger += 40
-    puts "#{@name.gsub("\n", "")}: Любимий город може спать спокойно.",""
+    puts "#{@name.tr("\n", '')}: Любимий город може спать спокойно.", ''
     time_travel
   end
 
-  # вивести стати
+  # show stats
   def stats
     deputat_stats = {}
-    self.instance_variables.each do |attr|
-      deputat_stats[attr] = self.instance_variable_get(attr)
+    instance_variables.each do |attr|
+      deputat_stats[attr] = instance_variable_get(attr)
     end
     p deputat_stats
   end
 
   def alive?
     if @health < 1
-      puts "#{@name.gsub("\n", "")} не вижив в такому жорстокому світі.",""
+      puts "#{@name.tr("\n", '')} не вижив в такому жорстокому світі.", ''
       false
     else
       true
@@ -84,48 +77,43 @@ class Pet
   end
 
   def check_hunger
-    if @hunger > 80
-      puts "#{@name.gsub("\n", "")}: Голодний такий."
-      @health += -15
-    end
+    return unless @hunger > 80
+    puts "#{@name.tr("\n", '')}: Голодний такий."
+    @health += -15
   end
 
   def check_corruption
-    if @corruption > 99
-      @health = 0
-      puts "Багато крав. От вашого депутата і посадили.","#{@name.gsub("\n", "")}: Це зрада!"
-    end
+    return unless @corruption > 99
+    @health = 0
+    puts 'Вашого депутата посадили.', "#{@name.tr("\n", '')}: Це зрада!"
   end
 
   def check_fatigue
-    if @fatigue > 99
-      sleep_a_little
-      puts "#{@name.gsub("\n", "")}: Я так втомився.",""
-    end
+    return unless @fatigue > 99
+    sleep_a_little
+    puts "#{@name.tr("\n", '')}: Я так втомився.", ''
   end
 
   def check_sleepiness
-    if @sleepiness > 99
-      @health += -15
-      puts "#{@name.gsub("\n", "")}: Від роботи й коні дохнуть.",""
-      sleep_a_little
-    end
+    return unless @sleepiness > 99
+    @health += -15
+    puts "#{@name.tr("\n", '')}: Від роботи й коні дохнуть.", ''
+    sleep_a_little
   end
 
   def check_mood
-    if @mood < 50
-      puts "#{@name.gsub("\n", "")}: Так скучно.",""
-      give_bribe
-    end
+    return unless @mood < 50
+    puts "#{@name.tr("\n", '')}: Так скучно.", ''
+    give_bribe
   end
 
   def help
-    puts "#{HELP}",""
+    puts "#{HELP}", ''
   end
 
   private
 
-  # імітація часу
+  # time imitation
   def time_travel
     @hunger += 10
     @mood += -15
@@ -135,13 +123,16 @@ class Pet
   end
 
   def check_stats
-    self.instance_variables.each do |attr|
+    instance_variables.each do |attr|
       if attr != :@name
-        value = [[self.instance_variable_get(attr), 100].min, 0].max
-        self.instance_variable_set(attr, value)
+        value = [[instance_variable_get(attr), 100].min, 0].max
+        instance_variable_set(attr, value)
       end
     end
-    alive?
+    check_needs
+  end
+
+  def check_needs
     check_corruption
     check_hunger
     check_fatigue
